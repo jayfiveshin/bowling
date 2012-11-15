@@ -1,46 +1,43 @@
 # bowling.rb
 class Bowling
 
-  attr_accessor :score, :last
+  attr_accessor :bowls
 
   def initialize
-    @score = []
+    @frame = 0
+    @bowls = Array.new(10) { [] }
   end
 
   def hit(pins)
-    @score << pins
 
-    # Checks if last hit resulted in a strike.
-    # If it is, skips the next throw by adding a score of zero.
-    # The following code: "@score.index(@score.last)%2 == 0"
-    # ...checks that the last hit was not a second throw.
-    if pins == 10 && (@score.index(@score.last)%2 == 0)
-      @score << 0
+    current_frame = @bowls[@frame] << pins
+
+    if @frame >= 1
+      previous_frame = @bowls[@frame-1]
+      if previous_frame[0] == 10
+        previous_frame << pins
+      elsif previous_frame.reduce(:+) == 10
+        previous_frame << pins
+      end
     end
+
+    if @frame >= 2
+      if double_strike?
+        @bowls[@frame-2] << pins
+      end
+    end
+
+    if (current_frame.length >= 2) || pins == 10
+      @frame += 1
+    end
+
   end
 
   def score
-    @score.each_index do |i|
-      if i%2==0 # First throw in a frame
-        if @score[i] == 10 # Strike
-          @score[i] += (@score[i+2])
-          if @score[i+2] == 10 # Another strike
-            @score[i] += @score[i+4]
-          else
-            @score[i] += @score[i+3]
-          end
-        elsif (@score[i]+@score[i+1]) == 10 # Spare
-          @score[i] += @score[i+2]
-        end
-      else
-        next
-      end
-    end
-    @score.reduce(:+)
+    @bowls.flatten.reduce { |sum, val| sum + val.to_i }
   end
 
-  def scores
-    @score
+  def double_strike?
+    (@bowls[@frame-1][0] && @bowls[@frame-2][0]) == 10
   end
-
 end

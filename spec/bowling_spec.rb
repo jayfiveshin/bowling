@@ -1,74 +1,100 @@
 require_relative '../bowling.rb'
 
-describe Bowling, "#score" do
+describe Bowling do
 
   before(:each) do
     @bowling = Bowling.new
   end
 
-  it "should return 0 for all gutter game" do
-    20.times { @bowling.hit 0 }
-    @bowling.score.should eq 0
+  it "should be able to bowl" do
+    @bowling.hit(8)
+    @bowling.bowls[0][0].should eq(8)
   end
 
-  it "should return a score of 1 if only one pin hit" do
-    @bowling.hit 1
-    19.times { @bowling.hit 0 }
-    @bowling.score.should eq 1
+  it "should be able to bowl twice in one frame" do
+    @bowling.hit(2)
+    @bowling.hit(4)
+    @bowling.bowls[0][0].should eq(2)
+    @bowling.bowls[0][1].should eq(4)
   end
 
-  it "should return a score of 10 if five pins hit two times" do
-    2.times  { @bowling.hit 5 }
-    18.times { @bowling.hit 0 }
-    @bowling.score.should eq 10
+  it "should be able to tell difference between frames" do
+    @bowling.hit(2)
+    @bowling.hit(4)
+    @bowling.hit(4)
+    @bowling.bowls[0][0].should eq(2)
+    @bowling.bowls[0][1].should eq(4)
+    @bowling.bowls[1][0].should eq(4)
+    # @bowling.bowls.should eq("X")
   end
 
-  it "should know how to handle getting a spare" do
-    2.times  { @bowling.hit 5 }
-    @bowling.hit 4
+  it "should be able to bowl a full game" do
+    20.times { @bowling.hit(4) }
+    @bowling.bowls.last.should_not eq([])
+    # @bowling.bowls.should eq("X")
+  end
+
+  it "should be able to return game score at the end of the game" do
+    20.times { @bowling.hit(4) }
+    @bowling.score.should eq(80)
+    # @bowling.score.should eq("X")
+  end
+
+  it "should be able to handle spares" do
+    3.times  { @bowling.hit 5 }
     17.times { @bowling.hit 0 }
-    @bowling.score.should eq (14 + 4)
+    @bowling.score.should eq(20)
+    # @bowling.score.should eq("X")
   end
 
-  it "should know how to handle getting a strike" do
+  it "should be able to handle strikes with no additional points" do
+    @bowling.hit 10
+    18.times { @bowling.hit 0 }
+    @bowling.score.should eq(10)
+  end
+
+  it "should be able to handle strikes with one additional point" do
+    @bowling.hit 10
+    @bowling.hit 9
+    17.times { @bowling.hit 0 }
+    @bowling.score.should eq(28)
+    # @bowling.bowls.should eq("X")
+  end
+
+  it "should be able to handles strikes with two additional points" do
     @bowling.hit 10
     2.times  { @bowling.hit 4 }
     16.times { @bowling.hit 0 }
-    @bowling.score.should eq (10 + 8 + 8)
+    @bowling.score.should eq(26)
+    # @bowling.bowls.should eq("X")
   end
 
-  it "should know the difference between a spare and a strike" do
-    @bowling.hit 0
-    @bowling.hit 10
-    2.times { @bowling.hit 4 }
-    16.times { @bowling.hit 0 }
-    @bowling.score.should eq (10 + 4 + 8)
+  it "should be able to handle multiple spares" do
+    6.times  { @bowling.hit 5 }
+    14.times { @bowling.hit 0 }
+    @bowling.score.should eq(40)
   end
 
-  it "should know how to handle getting many spares in a row" do
-    18.times { @bowling.hit 5 }
-    2.times  { @bowling.hit 0 }
-    @bowling.score.should eq (15*8+10)
+  it "should be able to handle double strikes" do
+    2.times  { @bowling.hit 10 }
+    16.times { @bowling.hit 0  }
+    @bowling.score.should eq(30)
   end
 
-  it "should know how to handle getting many strikes in a row" do
-    9.times do
-      @bowling.hit 10
-    end
-    2.times { @bowling.hit 0 }
-    @bowling.score.should eq 240
+  it "should be able to handle double strikes and a single" do
+    2.times  { @bowling.hit 10 }
+    @bowling.double_strike?.should eq(true)
+    @bowling.hit 9
+    15.times { @bowling.hit 0  }
+    @bowling.bowls.should eq("X")
+    @bowling.score.should eq(57)
   end
 
-  # it "should give one more bowl if you get a spare in the last frame" do
-
+  # it "should be able to handle turkeys" do
+  #   3.times  { @bowling.hit 10 }
+  #   14.times { @bowling.hit 0  }
+  #   @bowling.bowls.should eq("X")
+  #   @bowling.score.should eq(60)
   # end
 
-  # it "should give two more bowl if you get a strike in the last frame" do
-
-  # end
-
-  # it "should return 300 for a perfect game" do
-  #   20.times { @bowling.hit(10) }
-  #   @bowling.score.should eq(300)
-  # end
 end
