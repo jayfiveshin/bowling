@@ -37,4 +37,3 @@ DEPENDENCIES
   guard-rspec
   rb-fsevent
   rspec
-  rspec-core
