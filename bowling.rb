@@ -1,7 +1,7 @@
 # bowling.rb
 class Bowling
 
-  attr_accessor :bowls
+  attr_accessor :bowls, :frame
 
   def initialize
     @frame = 0
@@ -9,28 +9,37 @@ class Bowling
   end
 
   def hit(pins)
-
-    current_frame = @bowls[@frame] << pins
-
-    if @frame >= 1
-      previous_frame = @bowls[@frame-1]
-      if previous_frame[0] == 10
-        previous_frame << pins
-      elsif previous_frame.reduce(:+) == 10
-        previous_frame << pins
-      end
+    if current_frame.nil?
+      puts "\nYou've already reached the end of the game."
+      return
     end
 
-    if @frame >= 2
-      if double_strike?
-        @bowls[@frame-2] << pins
+    current_frame << pins
+
+    if @frame >= 1
+      calculate_last_frame(pins)
+    end
+
+    if @frame >= 2 && double_strike? && current_frame[1].nil?
+      last_last_frame << pins
+    end
+
+    if @frame == 9 && (pins == 10 || current_frame.reduce(:+) == 10)
+      unless current_frame.length == 3
+        return
       end
     end
 
     if (current_frame.length >= 2) || pins == 10
-      @frame += 1
+      @frame += 1 
     end
 
+  end
+
+  def calculate_last_frame(pins)
+    if (last_frame[0] == 10) || (last_frame.reduce(:+) == 10)
+      last_frame << pins unless last_frame.count == 3
+    end
   end
 
   def score
@@ -38,6 +47,19 @@ class Bowling
   end
 
   def double_strike?
-    (@bowls[@frame-1][0] && @bowls[@frame-2][0]) == 10
+    (last_frame[0] == 10) && (last_last_frame[0] == 10)
   end
+
+  def current_frame
+    @bowls[@frame]
+  end
+
+  def last_frame
+    @bowls[@frame-1]
+  end
+
+  def last_last_frame
+    @bowls[@frame-2]
+  end
+
 end

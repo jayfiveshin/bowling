@@ -81,20 +81,58 @@ describe Bowling do
     @bowling.score.should eq(30)
   end
 
-  it "should be able to handle double strikes and a single" do
+  it "should be able to handle double strikes" do
     2.times  { @bowling.hit 10 }
     @bowling.double_strike?.should eq(true)
-    @bowling.hit 9
-    15.times { @bowling.hit 0  }
-    @bowling.bowls.should eq("X")
-    @bowling.score.should eq(57)
+    @bowling.hit 3
+    @bowling.hit 4
+    @bowling.hit 5
+    13.times { @bowling.hit 0  }
+    @bowling.score.should eq(52)
+    # @bowling.bowls.should eq("X")
   end
 
-  # it "should be able to handle turkeys" do
-  #   3.times  { @bowling.hit 10 }
-  #   14.times { @bowling.hit 0  }
-  #   @bowling.bowls.should eq("X")
-  #   @bowling.score.should eq(60)
-  # end
+  it "should be able to handle turkeys" do
+    3.times  { @bowling.hit 10 }
+    3.times  { @bowling.hit 4  }
+    11.times { @bowling.hit 0  }
+    # @bowling.bowls.should eq("X")
+    @bowling.score.should eq(84)
+  end
+
+  it "should be able to handle getting spares in the last frame" do
+    18.times { @bowling.hit 4 }
+    2.times  { @bowling.hit 5 }
+    @bowling.hit 10
+    # @bowling.bowls.should eq("X")
+    @bowling.score.should eq(92)
+  end
+
+  it "should be able to calculate a perfect game" do
+    12.times { @bowling.hit 10 }
+    # @bowling.bowls.should eq("X")
+    @bowling.score.should eq(300)
+  end
+  
+  it "should not let you bowl more than you are allowed part 1" do
+    20.times { @bowling.hit 4 }
+    @bowling.hit(4).should eq(nil)
+    # @bowling.bowls.should eq("X")
+    @bowling.score.should eq(80)
+  end
+
+  it "should not let you bowl more than you are allowed part 2" do
+    21.times { @bowling.hit 5 }
+    @bowling.hit(5).should eq(nil)
+    # @bowling.bowls.should eq("X")
+    @bowling.score.should eq(150)
+  end
+
+  it "should not let you bowl more than you are allowed part 3" do
+    12.times { @bowling.hit 10 }
+    @bowling.hit(10).should eq(nil)
+    # @bowling.bowls.should eq("X")
+    @bowling.score.should eq(300)
+  end
 
 end
