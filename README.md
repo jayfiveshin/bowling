@@ -2,7 +2,7 @@
 This is a bowling calculator. It can calculate bowling scores. That's
 all it does for now. 
 
-I will be turning this int a rails application and add a web interface
+I will be turning this into a rails application and add a web interface
 for it.
 
 I hope to turn this into a bowling game app that will be playable on a
